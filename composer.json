@@ -1,0 +1,8 @@
+{
+  "name": "cookpad-baby/password-protected-babypad",
+  "description": "パスワード保護 for ベビーパッド",
+  "type": "wordpress-plugin",
+  "require": {
+      "composer/installers": "~1.0"
+  }
+}
