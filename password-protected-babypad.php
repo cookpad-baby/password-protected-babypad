@@ -238,14 +238,14 @@ class Password_Protected_Babypad {
     // 種類
     $type = "ベビーパッド";
 
-    $blog_name = get_bloginfo( 'name' );
+    $dir_name = basename(get_bloginfo( 'url' ));
     $pass_arr = null;
 
     /* クラウドパスワード管理表から設定情報を取得 */
     $pwlist = new NoRewindIterator( new SplFileObject( self::PWLIST_PATH ));
     $pwlist->setFlags(SplFileObject::READ_CSV);
     foreach ($pwlist as $line) {
-      if((!empty($line[self::CONST_TYPE])&&$line[self::CONST_TYPE]==$type) && (!empty($line[self::CONST_DIRECTORY])&&$line[self::CONST_DIRECTORY]==$blog_name)) {
+      if((!empty($line[self::CONST_TYPE])&&$line[self::CONST_TYPE]==$type) && (!empty($line[self::CONST_DIRECTORY])&&$line[self::CONST_DIRECTORY]==$dir_name)) {
         $pw_info = $line;
         break;
       }
@@ -905,15 +905,15 @@ function ppb_password_fnc ($params = []) {
 
     // ディレクトリが指定されたら、そちらを優先する
     if(!empty($params['dir']))
-        $blog_name = $params['dir'];
+         $dir_name = $params['dir'];
     else
-        $blog_name = get_bloginfo('name');
+        $dir_name = basename(get_bloginfo('url'));
 
     // クラウドパスワード管理表から設定情報を取得
     $pwlist = new NoRewindIterator( new SplFileObject( $pwlist_url ));
     $pwlist->setFlags(SplFileObject::READ_CSV);
     foreach ($pwlist as $line) {
-        if((!empty($line[$CONST_TYPE])&&$line[$CONST_TYPE]==$type) && (!empty($line[$CONST_DIRECTORY])&&$line[$CONST_DIRECTORY]==$blog_name)) {
+        if((!empty($line[$CONST_TYPE])&&$line[$CONST_TYPE]==$type) && (!empty($line[$CONST_DIRECTORY])&&$line[$CONST_DIRECTORY]==$dir_name)) {
             $pw_info = $line;
             break;
         }
