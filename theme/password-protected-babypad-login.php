@@ -109,24 +109,25 @@ do_action( 'password_protected_babypad_login_head' );
 
   <form name="loginform" id="loginform" action="<?php echo esc_url( $Password_Protected_Babypad->login_url() ); ?>" method="post">
     <p>
-      <label for="password_protected_babypad_pass"><?php echo apply_filters( 'password_protected_babypad_login_password_title', __( 'パスワードを入力してください(半角数値)', 'password-protected-babypad' ) ); ?><br />
-      <input type="tel" name="password_protected_babypad_pwd" id="password_protected_babypad_pass" class="input" value="" size="20" tabindex="20" /></label>
+      <label for="password_protected_babypad_pass"><?php echo apply_filters( 'password_protected_babypad_login_password_title', __( 'パスワードを入力してください(半角数値)', 'password-protected-babypad' ) ); ?></label>
+      <input type="tel" name="password_protected_babypad_pwd" id="password_protected_babypad_pass" class="input" value="" size="20" tabindex="20" />
     </p>
 
     <?php if ( $Password_Protected_Babypad->allow_remember_me() ) : ?>
-      <div>
       <p class="forgetmenot">
-        <label for="password_protected_babypad_rememberme"><input name="password_protected_babypad_rememberme" type="checkbox" id="password_protected_babypad_rememberme" value="1" tabindex="90" /> <?php esc_attr_e( 'Remember Me' ); ?></label>
+          <label for="password_protected_babypad_rememberme">
+              <input name="password_protected_babypad_rememberme" type="checkbox" id="password_protected_babypad_rememberme" value="1" tabindex="90" />
+              <?php esc_attr_e( 'Remember Me' ); ?>
+          </label>
       </p>
-      </div>
     <?php endif; ?>
-
-    <p class="submit">
-      <input type="submit" name="wp-submit" id="wp-submit" class="button button-primary button-large" value="<?php esc_attr_e( 'Log In' ); ?>" tabindex="100" />
-      <input type="hidden" name="testcookie" value="1" />
-      <input type="hidden" name="password-protected-babypad" value="login" />
-      <input type="hidden" name="redirect_to" value="<?php echo esc_attr( $_REQUEST['redirect_to'] ); ?>" />
-    </p>
+      <p class="submit">
+            <input type="submit" name="wp-submit" id="wp-submit" class="button button-primary button-large" value="<?php esc_attr_e( 'Log In' ); ?>" tabindex="100" />
+            <input type="hidden" name="testcookie" value="1" />
+            <input type="hidden" name="password-protected-babypad" value="login" />
+            <input type="hidden" name="redirect_to" value="<?php echo esc_attr( $_REQUEST['redirect_to'] ); ?>" />
+       </p>
+    </div>
   </form>
 
   <?php do_action( 'password_protected_babypad_after_login_form' ); ?>
