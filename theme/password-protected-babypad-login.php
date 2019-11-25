@@ -114,9 +114,11 @@ do_action( 'password_protected_babypad_login_head' );
     </p>
 
     <?php if ( $Password_Protected_Babypad->allow_remember_me() ) : ?>
+      <div>
       <p class="forgetmenot">
         <label for="password_protected_babypad_rememberme"><input name="password_protected_babypad_rememberme" type="checkbox" id="password_protected_babypad_rememberme" value="1" tabindex="90" /> <?php esc_attr_e( 'Remember Me' ); ?></label>
       </p>
+      </div>
     <?php endif; ?>
 
     <p class="submit">
