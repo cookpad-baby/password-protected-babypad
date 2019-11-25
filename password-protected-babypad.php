@@ -4,7 +4,7 @@
 Plugin Name: パスワード保護 for ベビーパッド
 Plugin URI:
 Description: password protected を元に、ベビーパッド用にスマホでアクセスした時のみパスワードを求めるように、かつパスワードリストからサイトごとにパスワードを読み込めるようにカスタマイズ。
-Version: 1.0.1
+Version: 1.1.0
 Author: Akemi Suwa
 Author URI:
 License: GPLv2
@@ -49,8 +49,9 @@ class Password_Protected_Babypad {
   const CONST_LIMIT = 3;
   const CONST_START = 4;
   const CONST_INTERVAL = 5;
+  const TYPE_BABYPAD = "ベビーパッド";
 
-  var $version = '2.2.5';
+  var $version = '1.1.0';
   var $admin   = null;
   var $errors  = null;
 
@@ -223,58 +224,54 @@ class Password_Protected_Babypad {
 
     return $bool;
 
-  }
+    }
 
   /**
    * Get Password
    *
    * @return  string  Password.
    */
-  public function get_password_protected_babypad_password() {
+    public function get_password_protected_babypad_password() {
+        // パスワードの併用
+        $both = (bool) get_option( 'password_protected_babypad_both' );
 
-    // パスワードの併用
-    $both = (bool) get_option( 'password_protected_babypad_both' );
+        $dir_name = basename(get_bloginfo( 'url' ));
+        $pass_arr = null;
 
-    // 種類
-    $type = "ベビーパッド";
+        /* クラウドパスワード管理表から設定情報を取得 */
+        $pwlist = new NoRewindIterator( new SplFileObject( self::PWLIST_PATH ));
+        $pwlist->setFlags(SplFileObject::READ_CSV);
+        foreach ($pwlist as $line) {
+            if((!empty($line[self::CONST_TYPE])&&$line[self::CONST_TYPE]==self::TYPE_BABYPAD) && (!empty($line[self::CONST_DIRECTORY])&&$line[self::CONST_DIRECTORY]==$dir_name)) {
+                $pw_info = $line;
+                break;
+            }
+        }
+        if( (empty($pw_info[self::CONST_PASSWORD])&&!empty($pw_info[self::CONST_LIMIT])&&!empty($pw_info[self::CONST_START])&&!empty($pw_info[self::CONST_INTERVAL])) ||
+            ($both&&!empty($pw_info[self::CONST_PASSWORD])&&!empty($pw_info[self::CONST_LIMIT])&&!empty($pw_info[self::CONST_START])&&!empty($pw_info[self::CONST_INTERVAL])) ) {
+            // パスワード生成
+            $keisan = 333;  // ハッシュ
+            $start_date = $pw_info[self::CONST_START];
+            $start_date = new DateTime($start_date);
+            $today = new DateTime();
+            while(true){
+                $end_date = clone $start_date;
+                $end_date->modify("+".$pw_info[self::CONST_LIMIT]." months -1 days");
+                if($today<=$end_date)
+                    $pass_arr[] = md5( substr($start_date->format('Ym') * $keisan,-4) );
+                $start_date->modify("+".$pw_info[self::CONST_INTERVAL]." months");
+                if($today<$start_date)
+                    break;
+            }
+            if($both&&!empty($pw_info[self::CONST_PASSWORD]))
+                // パスワード固定
+                $pass_arr[] = md5( $pw_info[self::CONST_PASSWORD] );
+        } else if(!empty($pw_info[self::CONST_PASSWORD]))
+            // パスワード固定
+            $pass_arr[] = md5( $pw_info[self::CONST_PASSWORD] );
 
-    $dir_name = basename(get_bloginfo( 'url' ));
-    $pass_arr = null;
-
-    /* クラウドパスワード管理表から設定情報を取得 */
-    $pwlist = new NoRewindIterator( new SplFileObject( self::PWLIST_PATH ));
-    $pwlist->setFlags(SplFileObject::READ_CSV);
-    foreach ($pwlist as $line) {
-      if((!empty($line[self::CONST_TYPE])&&$line[self::CONST_TYPE]==$type) && (!empty($line[self::CONST_DIRECTORY])&&$line[self::CONST_DIRECTORY]==$dir_name)) {
-        $pw_info = $line;
-        break;
-      }
+        return $pass_arr;
     }
-    if( (empty($pw_info[self::CONST_PASSWORD])&&!empty($pw_info[self::CONST_LIMIT])&&!empty($pw_info[self::CONST_START])&&!empty($pw_info[self::CONST_INTERVAL])) ||
-        ($both&&!empty($pw_info[self::CONST_PASSWORD])&&!empty($pw_info[self::CONST_LIMIT])&&!empty($pw_info[self::CONST_START])&&!empty($pw_info[self::CONST_INTERVAL])) ) {
-      // パスワード生成
-      $keisan = 333;  // ハッシュ
-      $start_date = $pw_info[self::CONST_START];
-      $start_date = new DateTime($start_date);
-      $today = new DateTime();
-      while(true){
-        $end_date = clone $start_date;
-        $end_date->modify("+".$pw_info[self::CONST_LIMIT]." months -1 days");
-        if($today<=$end_date)
-          $pass_arr[] = md5( substr($start_date->format('Ym') * $keisan,-4) );
-        $start_date->modify("+".$pw_info[self::CONST_INTERVAL]." months");
-        if($today<$start_date)
-          break;
-      }
-      if($both&&!empty($pw_info[self::CONST_PASSWORD]))
-        // パスワード固定
-        $pass_arr[] = md5( $pw_info[self::CONST_PASSWORD] );
-    } else if(!empty($pw_info[self::CONST_PASSWORD]))
-      // パスワード固定
-      $pass_arr[] = md5( $pw_info[self::CONST_PASSWORD] );
-
-    return $pass_arr;
-  }
 
   /**
    * Allow Babypad
@@ -889,92 +886,76 @@ class Password_Protected_Babypad {
 }
 /* クラウドパスワード 設定ファイルから読み込み */
 function ppb_password_fnc ($params = []) {
+
     extract(shortcode_atts(['file' => 'default'], $params));
     ob_start();
 
-    // パスワード管理表CSV
-    $pwlist_url = "https://medipacmama.com/_babypad-hospital-lists/pwlist.csv";
-    // 種類
-    $type = "ベビーパッド";
-    $CONST_TYPE = 0;
-    $CONST_DIRECTORY = 1;
-    $CONST_PASSWORD = 2;
-    $CONST_LIMIT = 3;
-    $CONST_START = 4;
-    $CONST_INTERVAL = 5;
+    // パスワードの併用
+    $both = (bool) get_option( 'password_protected_babypad_both' );
 
     // ディレクトリが指定されたら、そちらを優先する
     if(!empty($params['dir']))
-         $dir_name = $params['dir'];
+        $dir_name = $params['dir'];
     else
         $dir_name = basename(get_bloginfo('url'));
 
-    // クラウドパスワード管理表から設定情報を取得
-    $pwlist = new NoRewindIterator( new SplFileObject( $pwlist_url ));
+    /* クラウドパスワード管理表から設定情報を取得 */
+    $pwlist = new NoRewindIterator( new SplFileObject( Password_Protected_Babypad::PWLIST_PATH ));
     $pwlist->setFlags(SplFileObject::READ_CSV);
     foreach ($pwlist as $line) {
-        if((!empty($line[$CONST_TYPE])&&$line[$CONST_TYPE]==$type) && (!empty($line[$CONST_DIRECTORY])&&$line[$CONST_DIRECTORY]==$dir_name)) {
+        if((!empty($line[Password_Protected_Babypad::CONST_TYPE])&&$line[Password_Protected_Babypad::CONST_TYPE]==Password_Protected_Babypad::TYPE_BABYPAD) && (!empty($line[Password_Protected_Babypad::CONST_DIRECTORY])&&$line[Password_Protected_Babypad::CONST_DIRECTORY]==$dir_name)) {
             $pw_info = $line;
             break;
         }
     }
-    if((empty($pw_info[$CONST_PASSWORD])&&!empty($pw_info[$CONST_LIMIT])&&!empty($pw_info[$CONST_START])&&!empty($pw_info[$CONST_INTERVAL]))||
-        (!empty($params['const_password_off'])&&(strtotime($params['const_password_off'])<strtotime(date('Y-m-d')))&&!empty($pw_info[$CONST_PASSWORD])&&!empty($pw_info[$CONST_LIMIT])&&!empty($pw_info[$CONST_START])&&!empty($pw_info[$CONST_INTERVAL]))) {
+
+    $res = null;
+    if( (empty($pw_info[Password_Protected_Babypad::CONST_PASSWORD])&&!empty($pw_info[Password_Protected_Babypad::CONST_LIMIT])&&!empty($pw_info[Password_Protected_Babypad::CONST_START])&&!empty($pw_info[Password_Protected_Babypad::CONST_INTERVAL])) ||
+        ($both&&!empty($pw_info[Password_Protected_Babypad::CONST_PASSWORD])&&!empty($pw_info[Password_Protected_Babypad::CONST_LIMIT])&&!empty($pw_info[Password_Protected_Babypad::CONST_START])&&!empty($pw_info[Password_Protected_Babypad::CONST_INTERVAL])) ) {
+        // 固定と可変を併用の指定であれば、可変の現在有効なPWを表示する。
         // パスワード生成
         $keisan = 333;  // ハッシュ
-        $start_date = new DateTime("{$pw_info[$CONST_START]}");
+        $start_date = new DateTime("{$pw_info[Password_Protected_Babypad::CONST_START]}");
         $today = new DateTime();
         $pass_arr = null;
         while(true){
             $end_date = clone $start_date;
-            $end_date->modify("+".$pw_info[$CONST_LIMIT]." months -1 days");
+            $end_date->modify("+".$pw_info[Password_Protected_Babypad::CONST_LIMIT]." months -1 days");
             if($today<=$end_date)
                 $pass_arr[] = substr($start_date->format('Ym') * $keisan,-4);
-            $start_date->modify("+".$pw_info[$CONST_INTERVAL]." months");
+            $start_date->modify("+".$pw_info[Password_Protected_Babypad::CONST_INTERVAL]." months");
             if($today<$start_date)
                 break;
         }
-        $current_pass = array_pop($pass_arr);
+        // 固定と可変を併用の指定で、可変の設定がされていない場合は、固定PWを表示する。
+/*        if($both&&!empty($pw_info[Password_Protected_Babypad::CONST_PASSWORD]&&empty($pass_arr)))
+            // パスワード固定
+            $pass_arr[] = $pw_info[Password_Protected_Babypad::CONST_PASSWORD];*/
         //有効期限計算
         $pass_exp = $end_date->format('Y年n月');
-        if(empty($params['hide_interval'])) {
-            $heredocs = <<< EOM
-<p>&#x1f511; パスワード</p>
-<div class="sp_passarea">{$current_pass}</div>
-<ul>
-    <li>このパスワードは{$pass_exp}末まで有効です。</li>
-    <li>パスワードは{$pw_info[$CONST_INTERVAL]}カ月ごとに変わります。</li>
-</ul>
-EOM;
-        } else {
-            $heredocs = <<< EOM
-<p>&#x1f511; パスワード</p>
-<div class="sp_passarea">{$current_pass}</div>
-<ul>
-    <li>このパスワードは{$pass_exp}末まで有効です。</li>
-</ul>
-EOM;
-        }
-        if(empty($params['hide_pw']))
-            echo $heredocs;
-    } else if(!empty($pw_info[$CONST_PASSWORD])) {
-        // パスワード固定
-        $heredocs = <<< EOM
-<p>&#x1f511; パスワード</p>
-<div class="sp_passarea">{$pw_info[$CONST_PASSWORD]}</div>
-EOM;
-        if(empty($params['hide_pw']))
-            echo $heredocs;
+    } else if (!empty($pw_info[Password_Protected_Babypad::CONST_PASSWORD]))
+        $pass_arr[] = $pw_info[Password_Protected_Babypad::CONST_PASSWORD];
+
+    // 現在有効なPW
+    $current_pass = array_pop($pass_arr);
+
+    if(in_array('get_pw',$params) && !empty($current_pass))
+        $res = $current_pass;
+    else if(in_array('get_exp',$params) && !empty($pass_exp))
+        $res = $pass_exp;
+    else if(in_array('get_interval',$params) && !empty($pw_info[Password_Protected_Babypad::CONST_INTERVAL]) && is_numeric($pw_info[Password_Protected_Babypad::CONST_INTERVAL])) {
+        if($pw_info[Password_Protected_Babypad::CONST_INTERVAL]==6)
+            $res = "半年";
+        else if($pw_info[Password_Protected_Babypad::CONST_INTERVAL]%12==0)
+            $res = ($pw_info[Password_Protected_Babypad::CONST_INTERVAL]/12)."年";
+        else if($pw_info[Password_Protected_Babypad::CONST_INTERVAL]>12)
+            $res = floor($pw_info[Password_Protected_Babypad::CONST_INTERVAL]/12)."年".($pw_info[Password_Protected_Babypad::CONST_INTERVAL]%12)."ヵ月";
+        else
+            $res = $pw_info[Password_Protected_Babypad::CONST_INTERVAL]."ヵ月";
     }
+    if(!empty($res))
+        echo $res;
     return ob_get_clean();
 }
 add_shortcode('ppb_password', 'ppb_password_fnc');
-
-//css、script追加関数
-function add_ppb_script(){
-    // css登録 http://[site domain]/wp-content/plugins/password-protected-babypad/css/password-protected-babypad.css
-    wp_register_style('password-protected-babypad', plugins_url('css/password-protected-babypad.css', __FILE__));
-    wp_enqueue_style('password-protected-babypad');
-}
-add_action('wp_enqueue_scripts', 'add_ppb_script');
 

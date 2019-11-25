@@ -82,24 +82,11 @@ if ( version_compare( $wp_version, '3.9-dev', '>=' ) ) {
 
 ?>
 
-<style type="text/css" media="screen">
-#login_error, .login .message, #loginform { margin-bottom: 20px; }
-</style>
-
 <?php
 
 if ( wp_is_mobile() ) {
   ?>
   <meta name="viewport" content="width=320; initial-scale=0.9; maximum-scale=1.0; user-scalable=0;" />
-  <style type="text/css" media="screen">
-  .login form, .login .message, #login_error { margin-left: 0px; }
-  .login #nav, .login #backtoblog { margin-left: 8px; }
-  #login { padding: 20px 0; }
-  .login.login-password-protected-babypad h1 { background-image: none; width: auto; text-indent: 0; height: auto; margin-top: 80px; }
-  .login.login-password-protected-babypad form { background-color: rgba(255, 255, 255, .3); }
-  .login.login-password-protected-babypad form p.submit .button-primary { background-color: #eb748d !important; border-color: #eb748d; box-shadow: none!important; color: #fff; text-decoration: none; text-shadow: none!important; }
-  input#password_protected_babypad_pass:focus { border-color: #F0A59D!important; box-shadow: 0 0 2px rgba(240,165,157,.8); }
-  </style>
   <?php
 }
 
