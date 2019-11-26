@@ -4,7 +4,7 @@
 Plugin Name: パスワード保護 for ベビーパッド
 Plugin URI:
 Description: password protected を元に、ベビーパッド用にスマホでアクセスした時のみパスワードを求めるように、かつパスワードリストからサイトごとにパスワードを読み込めるようにカスタマイズ。
-Version: 1.1.0
+Version: 1.1.1
 Author: Akemi Suwa
 Author URI:
 License: GPLv2
@@ -41,7 +41,7 @@ $Password_Protected_Babypad = new Password_Protected_Babypad();
 class Password_Protected_Babypad {
 
     // パスワード管理表CSV
-  const PWLIST_PATH = "https://medipacmama.com/_babypad-hospital-lists/pwlist.csv";
+  const PWLIST_PATH = "https://medipacmama.com/_babypad-hospital-lists/pwlist_.csv";
 
   const CONST_TYPE = 0;
   const CONST_DIRECTORY = 1;
@@ -51,7 +51,7 @@ class Password_Protected_Babypad {
   const CONST_INTERVAL = 5;
   const TYPE_BABYPAD = "ベビーパッド";
 
-  var $version = '1.1.0';
+  var $version = '1.1.1';
   var $admin   = null;
   var $errors  = null;
 
@@ -131,7 +131,6 @@ class Password_Protected_Babypad {
     }
 
     $pwd = $this->get_password_protected_babypad_password();
-
     // リストにパスワードがある
     if ( !empty($pwd)) {
       $is_active = true;
@@ -238,6 +237,13 @@ class Password_Protected_Babypad {
         $dir_name = basename(get_bloginfo( 'url' ));
         $pass_arr = null;
 
+        // パスワードリストファイル存在確認
+        $handle = @fopen(self::PWLIST_PATH,'r');
+        if($handle===false)
+            return false;
+        else
+            fclose($handle);
+
         /* クラウドパスワード管理表から設定情報を取得 */
         $pwlist = new NoRewindIterator( new SplFileObject( self::PWLIST_PATH ));
         $pwlist->setFlags(SplFileObject::READ_CSV);
@@ -247,6 +253,9 @@ class Password_Protected_Babypad {
                 break;
             }
         }
+        if(empty($pw_info))
+            return false;
+
         if( (empty($pw_info[self::CONST_PASSWORD])&&!empty($pw_info[self::CONST_LIMIT])&&!empty($pw_info[self::CONST_START])&&!empty($pw_info[self::CONST_INTERVAL])) ||
             ($both&&!empty($pw_info[self::CONST_PASSWORD])&&!empty($pw_info[self::CONST_LIMIT])&&!empty($pw_info[self::CONST_START])&&!empty($pw_info[self::CONST_INTERVAL])) ) {
             // パスワード生成
@@ -899,6 +908,13 @@ function ppb_password_fnc ($params = []) {
     else
         $dir_name = basename(get_bloginfo('url'));
 
+    // パスワードリストファイル存在確認
+    $handle = @fopen(Password_Protected_Babypad::PWLIST_PATH,'r');
+    if($handle===false)
+        return ob_get_clean();
+    else
+        fclose($handle);
+
     /* クラウドパスワード管理表から設定情報を取得 */
     $pwlist = new NoRewindIterator( new SplFileObject( Password_Protected_Babypad::PWLIST_PATH ));
     $pwlist->setFlags(SplFileObject::READ_CSV);
@@ -908,6 +924,9 @@ function ppb_password_fnc ($params = []) {
             break;
         }
     }
+
+    if(empty($pw_info))
+        return ob_get_clean();
 
     $res = null;
     if( (empty($pw_info[Password_Protected_Babypad::CONST_PASSWORD])&&!empty($pw_info[Password_Protected_Babypad::CONST_LIMIT])&&!empty($pw_info[Password_Protected_Babypad::CONST_START])&&!empty($pw_info[Password_Protected_Babypad::CONST_INTERVAL])) ||
