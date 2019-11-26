@@ -41,7 +41,7 @@ $Password_Protected_Babypad = new Password_Protected_Babypad();
 class Password_Protected_Babypad {
 
     // パスワード管理表CSV
-  const PWLIST_PATH = "https://medipacmama.com/_babypad-hospital-lists/pwlist_.csv";
+  const PWLIST_PATH = "https://medipacmama.com/_babypad-hospital-lists/pwlist.csv";
 
   const CONST_TYPE = 0;
   const CONST_DIRECTORY = 1;
