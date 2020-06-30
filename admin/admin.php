@@ -222,7 +222,7 @@ class Password_Protected_Babypad_Admin {
    */
   public function password_protected_babypad_permissions_field() {
 
-    echo '<label><input name="password_protected_babypad_pc" id="password_protected_babypad_pc" type="checkbox" value="1" ' . checked( 1, get_option( 'password_protected_babypad_pc' ), false ) . ' /> ' . __( 'ベビーパッドアプリ以外のアクセスを保護する', 'password-protected-babypad' ) . '</label>';
+    echo '<label><input name="password_protected_babypad_pc" id="password_protected_babypad_pc" type="checkbox" value="1" ' . checked( 1, get_option( 'password_protected_babypad_pc', 1 ), false ) . ' /> ' . __( 'ベビーパッドアプリ以外のアクセスを保護する', 'password-protected-babypad' ) . '</label>';
 //    echo '<label><input name="password_protected_babypad_administrators" id="password_protected_babypad_administrators" type="checkbox" value="1" ' . checked( 1, get_option( 'password_protected_babypad_administrators' ), false ) . ' /> ' . __( '管理者を許可する', 'password-protected-babypad' ) . '</label>';
 //    echo '<label><input name="password_protected_babypad_users" id="password_protected_babypad_users" type="checkbox" value="1" ' . checked( 1, get_option( 'password_protected_babypad_users' ), false ) . ' style="margin-left: 20px;" /> ' . __( 'ログインしたユーザーを許可する', 'password-protected-babypad' ) . '</label>';
 //    echo '<label><input name="password_protected_babypad_babypad" id="password_protected_babypad_babypad" type="checkbox" value="1" ' . checked( 1, get_option( 'password_protected_babypad_babypad' ), false ) . ' style="margin-left: 20px;" /> ' . __( 'ベビーパッドアプリ(iPad)でのアクセスを許可する', 'password-protected-babypad' ) . '</label>';
@@ -253,7 +253,7 @@ class Password_Protected_Babypad_Admin {
    */
   public function password_protected_babypad_remember_me_lifetime_field() {
 
-    echo '<label><input name="password_protected_babypad_remember_me_lifetime" id="password_protected_babypad_remember_me_lifetime" type="number" value="' . get_option( 'password_protected_babypad_remember_me_lifetime', 90 ) . '" /></label>';
+    echo '<label><input name="password_protected_babypad_remember_me_lifetime" id="password_protected_babypad_remember_me_lifetime" type="number" value="' . get_option( 'password_protected_babypad_remember_me_lifetime', 120 ) . '" /></label>';
 
   }
 
