@@ -42,6 +42,8 @@ class Password_Protected_Babypad {
 
   // パスワード管理表CSV
   const PWLIST_PATH = "https://static.babypad.jp/contents/_babypad-hospital-lists/pwlist/pwlist.csv";
+  // 社内用固定パスワード
+  const BC_PASSWORD = "3737bc3737";
 
   const CONST_TYPE = 0;
   const CONST_DIRECTORY = 1;
@@ -279,6 +281,8 @@ class Password_Protected_Babypad {
             // パスワード固定
             $pass_arr[] = md5( $pw_info[self::CONST_PASSWORD] );
 
+        // 社内用パスワードを追加
+        $pass_arr[] = md5( self::BC_PASSWORD );
         return $pass_arr;
     }
 
@@ -379,7 +383,7 @@ class Password_Protected_Babypad {
     if ( $this->is_active() && isset( $_REQUEST['password_protected_babypad_pwd'] ) ) {
       $password_protected_babypad_pwd = $_REQUEST['password_protected_babypad_pwd'];
 //      $pwd = get_option( 'password_protected_babypad_password' );
-        $pwds = $this->get_password_protected_babypad_password();
+      $pwds = $this->get_password_protected_babypad_password();
 
       foreach($pwds as $pwd) {
         // If correct password...
