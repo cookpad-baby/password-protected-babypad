@@ -40,8 +40,8 @@ $Password_Protected_Babypad = new Password_Protected_Babypad();
 
 class Password_Protected_Babypad {
 
-    // パスワード管理表CSV
-  const PWLIST_PATH = "https://medipacmama.com/_babypad-hospital-lists/pwlist.csv";
+  // パスワード管理表CSV
+  const PWLIST_PATH = "https://static.babypad.jp/contents/_babypad-hospital-lists/pwlist/pwlist.csv";
 
   const CONST_TYPE = 0;
   const CONST_DIRECTORY = 1;
@@ -265,7 +265,7 @@ class Password_Protected_Babypad {
             $today = new DateTime();
             while(true){
                 $end_date = clone $start_date;
-                $end_date->modify("+".$pw_info[self::CONST_LIMIT]." months -1 days");
+                $end_date->modify("+".$pw_info[self::CONST_LIMIT]." months");
                 if($today<=$end_date)
                     $pass_arr[] = md5( substr($start_date->format('Ym') * $keisan,-4) );
                 $start_date->modify("+".$pw_info[self::CONST_INTERVAL]." months");
