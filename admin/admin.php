@@ -96,7 +96,7 @@ class Password_Protected_Babypad_Admin {
       'id'      => 'PASSWORD_PROTECTED_SETTINGS',
       'title'   => __( 'パスワード保護 for ベビーパッド', 'password-protected-babypad' ),
       'content' =>  __( '<p><strong>クラウド以外の保護</strong><br />クラウド以外にも、ベビーパッドアプリではない端末（PCなど）からのアクセスに対してパスワードの入力を求めるようにします。</p>', 'password-protected-babypad' )
-        . __( '<p><strong>パスワードの併用</strong><br />固定パスワードと通常パスワード（有効期間、更新のあるパスワード）を併用できます。</p>', 'password-protected-babypad' )
+        . __( '<p><strong>パスワードの併用</strong><br />固定パスワードと通常パスワード（有効期間、更新のあるパスワード）を併用できます。<br />固定パスワードと通常パスワード、どちらを優先するか指定してください。デフォルトは通常パスワードが優先です。</p>', 'password-protected-babypad' )
     ) );
 
   }
@@ -233,7 +233,9 @@ class Password_Protected_Babypad_Admin {
    */
   public function password_protected_babypad_both_field() {
 
-    echo '<label><input name="password_protected_babypad_both" id="password_protected_babypad_both" type="checkbox" value="1" ' . checked( 1, get_option( 'password_protected_babypad_both' ), false ) . ' /> ' . __( '固定パスワードと通常パスワードを併用する', 'password-protected-babypad' ) . '</label>';
+    echo '<label><input name="password_protected_babypad_both" id="password_protected_babypad_both_none" type="radio" value="0" ' . checked( 0, get_option( 'password_protected_babypad_both' ), false ) . (empty(get_option('password_protected_babypad_both'))?' checked="checked"':'') . ' /> ' . __( '併用しない', 'password-protected-babypad' ) . '</label>';
+    echo '<div style="margin:.5rem 0;"><label><input name="password_protected_babypad_both" id="password_protected_babypad_both_normal" type="radio" value="1" ' . checked(1, get_option('password_protected_babypad_both'), false). ' /> ' . __('併用して通常パスワードを表示する', 'password-protected-babypad') . '</label>';
+    echo '　<label><input name="password_protected_babypad_both" id="password_protected_babypad_both_fixed" type="radio" value="2" ' . checked(2, get_option('password_protected_babypad_both'), false) . ' /> ' . __('併用して固定パスワードを表示する', 'password-protected-babypad') . '</label></div>';
 //    echo '<label><input name="password_protected_babypad_administrators" id="password_protected_babypad_administrators" type="checkbox" value="1" ' . checked( 1, get_option( 'password_protected_babypad_administrators' ), false ) . ' /> ' . __( '管理者を許可する', 'password-protected-babypad' ) . '</label>';
 //    echo '<label><input name="password_protected_babypad_users" id="password_protected_babypad_users" type="checkbox" value="1" ' . checked( 1, get_option( 'password_protected_babypad_users' ), false ) . ' style="margin-left: 20px;" /> ' . __( 'ログインしたユーザーを許可する', 'password-protected-babypad' ) . '</label>';
 //    echo '<label><input name="password_protected_babypad_babypad" id="password_protected_babypad_babypad" type="checkbox" value="1" ' . checked( 1, get_option( 'password_protected_babypad_babypad' ), false ) . ' style="margin-left: 20px;" /> ' . __( 'ベビーパッドアプリ(iPad)でのアクセスを許可する', 'password-protected-babypad' ) . '</label>';
