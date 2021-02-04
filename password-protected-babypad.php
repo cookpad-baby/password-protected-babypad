@@ -933,6 +933,7 @@ function ppb_password_fnc ($params = []) {
         return ob_get_clean();
 
     $res = null;
+    $pass_arr = null;
     if($both<2 &&
         ( !empty($pw_info[Password_Protected_Babypad::CONST_LIMIT])&&
           !empty($pw_info[Password_Protected_Babypad::CONST_START])&&
