@@ -95,7 +95,8 @@ class Password_Protected_Babypad_Admin {
     $current_screen->add_help_tab( array(
       'id'      => 'PASSWORD_PROTECTED_SETTINGS',
       'title'   => __( 'パスワード保護 for ベビーパッド', 'password-protected-babypad' ),
-      'content' =>  __( '<p><strong>クラウド以外の保護</strong><br />クラウド以外にも、ベビーパッドアプリではない端末（PCなど）からのアクセスに対してパスワードの入力を求めるようにします。</p>', 'password-protected-babypad' )
+      'content' =>  __( '<p><strong>複数サイトを一括制御</strong><br />複数のサイトを1度のパスワード入力で共通制御したい場合(クラウドでも統合機仕様など)に、Cookie名称に使用する識別子(英数字)を入力してください。<br />通常使用の場合は、この項目は空欄にしてください。</p>', 'password-protected-babypad' )
+        . __( '<p><strong>クラウド以外の保護</strong><br />クラウド以外にも、ベビーパッドアプリではない端末（PCなど）からのアクセスに対してパスワードの入力を求めるようにします。</p>', 'password-protected-babypad' )
         . __( '<p><strong>パスワードの併用</strong><br />固定パスワードと通常パスワード（有効期間、更新のあるパスワード）を併用できます。<br />固定パスワードと通常パスワード、どちらを優先するか指定してください。デフォルトは通常パスワードが優先です。</p>', 'password-protected-babypad' )
     ) );
 
@@ -120,6 +121,14 @@ class Password_Protected_Babypad_Admin {
       $this->options_group,
       'password_protected_babypad'
     );*/
+
+    add_settings_field(
+      'password_protected_babypad_multiple',
+      __( '複数サイトを一括制御', 'password-protected-babypad' ),
+      array( $this, 'password_protected_babypad_multiple_field' ),
+      $this->options_group,
+      'password_protected_babypad'
+    );
 
     add_settings_field(
       'password_protected_babypad_permissions',
@@ -163,7 +172,7 @@ class Password_Protected_Babypad_Admin {
     register_setting( $this->options_group, 'password_protected_babypad_both', 'intval' );
     register_setting( $this->options_group, 'password_protected_babypad_remember_me', 'boolval' );
     register_setting( $this->options_group, 'password_protected_babypad_remember_me_lifetime', 'intval' );
-
+    register_setting( $this->options_group, 'password_protected_babypad_multiple', 'strval' );
   }
 
   /**
@@ -216,6 +225,13 @@ class Password_Protected_Babypad_Admin {
 /*  public function password_protected_babypad_status_field() {
     echo '<label><input name="password_protected_babypad_status" id="password_protected_babypad_status" type="checkbox" value="1" ' . checked( 1, get_option( 'password_protected_babypad_status', 1 ), false ) . ' /> ' . __( '有効', 'password-protected-babypad' ) . '</label>';
   }*/
+
+  /**
+   * Password Protection Multiple Field
+   */
+  public function password_protected_babypad_multiple_field() {
+    echo '<label><input name="password_protected_babypad_multiple" id="password_protected_babypad_multiple" type="text" value="' . get_option( 'password_protected_babypad_multiple', '' ) . '" /></label>';
+  }
 
   /**
    * Password Protection Permissions Field

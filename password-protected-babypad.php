@@ -482,7 +482,9 @@ class Password_Protected_Babypad {
   public function get_site_id() {
 
     global $blog_id;
-    return 'bid_' . apply_filters( 'password_protected_babypad_blog_id', $blog_id );
+    return 'bid_' . (get_option( 'password_protected_babypad_multiple' )?
+            get_option( 'password_protected_babypad_multiple' ):
+            apply_filters( 'password_protected_babypad_blog_id', $blog_id ));
 
   }
 
@@ -727,7 +729,7 @@ class Password_Protected_Babypad {
    */
   public function cookie_name() {
 
-    return $this->get_site_id() . '_password_protected_babypad_auth';
+    return $this->get_site_id(). '_password_protected_babypad_auth';
 
   }
 
