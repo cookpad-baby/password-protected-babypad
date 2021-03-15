@@ -94,7 +94,8 @@ do_action( 'login_enqueue_scripts' );
 do_action( 'password_protected_babypad_login_head' );
 
 ?>
-<link rel="stylesheet" href="<?php bloginfo('stylesheet_url'); ?>">
+<link rel="stylesheet" href="<?=preg_replace('/(.+babypad\-renewal)(\-.+)?(\/style\.css)$/u','\1\3',
+    get_stylesheet_uri())?>">
 <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/yakuhanjp@3.2.0/dist/css/yakuhanrp.min.css">
 <link href="https://fonts.googleapis.com/css?family=M+PLUS+Rounded+1c:400,500,700&display=swap" rel="stylesheet">
 
