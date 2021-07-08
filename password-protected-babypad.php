@@ -307,10 +307,12 @@ class Password_Protected_Babypad {
    * @return  boolean         True/false.
    */
   public function protect_sp( $bool ) {
-    if( (bool) preg_match('/(iPhone|iPod|Android)/i', $_SERVER['HTTP_USER_AGENT']) ) {
-      $bool = true;
-    }
-    return $bool;
+        if ( (bool) preg_match('/(WMAPP)/i', $_SERVER['HTTP_USER_AGENT'])) {
+            $bool = false;
+        } else if((bool) preg_match('/(iPhone|iPod|Android)/i', $_SERVER['HTTP_USER_AGENT'])) {
+            $bool = true;
+        }
+        return $bool;
   }
 
   /**
