@@ -94,7 +94,7 @@ do_action( 'login_enqueue_scripts' );
 do_action( 'password_protected_babypad_login_head' );
 
 ?>
-<?php if(file_exists(get_stylesheet_directory().'/style.css')): ?>
+<?php if(filesize(get_stylesheet_directory().'/style.css')>100): ?>
     <link rel="stylesheet" href="<?=get_stylesheet_uri()?>">
 <?php else: ?>
     <link rel="stylesheet" href="<?=preg_replace('/(.+babypad\-renewal)(\-.+)?(\/style\.css)$/u','\1\3',
