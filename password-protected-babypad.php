@@ -4,7 +4,7 @@
 Plugin Name: パスワード保護 for ベビーパッド
 Plugin URI:
 Description: password protected を元に、ベビーパッド用にスマホでアクセスした時のみパスワードを求めるように、かつパスワードリストからサイトごとにパスワードを読み込めるようにカスタマイズ。
-Version: 1.1.3
+Version: 1.1.4
 Author: Akemi Suwa
 Author URI:
 License: GPLv2
@@ -987,4 +987,3 @@ function ppb_password_fnc ($params = []) {
     return ob_get_clean();
 }
 add_shortcode('ppb_password', 'ppb_password_fnc');
-
