@@ -70,6 +70,7 @@ add_action( 'password_protected_babypad_login_head', 'wp_login_viewport_meta' );
 
 <meta http-equiv="Content-Type" content="<?php bloginfo( 'html_type' ); ?>; charset=<?php bloginfo( 'charset' ); ?>" />
 <title><?php echo apply_filters( 'password_protected_babypad_wp_title', __('クラウドログイン ‹ ').get_bloginfo( 'name' ).__(' — ベビーパッド') ); ?></title>
+<link rel="shortcut icon" href="https://static.babypad.jp/contents/favicon.ico" />
 
 <?php
 
