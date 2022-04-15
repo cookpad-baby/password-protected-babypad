@@ -94,11 +94,9 @@ do_action( 'login_enqueue_scripts' );
 do_action( 'password_protected_babypad_login_head' );
 
 ?>
-<?php if(filesize(get_stylesheet_directory().'/style.css')>100): ?>
-    <link rel="stylesheet" href="<?=get_stylesheet_uri()?>">
-<?php else: ?>
-    <link rel="stylesheet" href="<?=preg_replace('/(.+babypad\-renewal)(\-.+)?(\/style\.css)$/u','\1\3',
-    get_stylesheet_uri())?>">
+<link rel="stylesheet" href="<?=get_template_directory_uri() . '/style.css'?>">
+<?php if(get_template_directory_uri()!==get_stylesheet_directory_uri()): ?>
+    <link rel="stylesheet" href="<?=get_stylesheet_directory_uri() . '/style.css'?>">
 <?php endif; ?>
 <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/yakuhanjp@3.2.0/dist/css/yakuhanrp.min.css">
 <link href="https://fonts.googleapis.com/css?family=M+PLUS+Rounded+1c:400,500,700&display=swap" rel="stylesheet">
